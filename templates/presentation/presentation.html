@@ -1,0 +1,101 @@
+{% extends 'presentation/base.html' %}
+
+
+
+{% block title %}
+    <title>Presentations</title>
+{% endblock %}
+
+
+{% block content %}
+
+<section class="container-fluid bigContainer p-0">
+    <div class="user_top first_bg d-block d-sm-flex justify-content-center justify-content-sm-between p-3 px-sm-4 py-sm-0">
+       <div class="d-flex align-items-center justify-content-center gap-2  ">
+            <p class="mb-0 text-white"><a href="{% url 'home' %}">NamSoft</a></p>
+       </div>
+       <form class="d-flex align-items-center justify-content-center mt-3 mt-sm-0 gap-3" role="search">
+        <a href="{% url 'logout' %}" class="btn btn-danger text-white">Logout</a>
+      </form>
+    </div>
+        <div class="d-flex">
+            <div class="left_content first_bg border_t shadow-lg justify-content-center text-center left_active">
+                <div class="profile">
+                    <div class="d-flex align-items-center border_b justify-content-between w-100">
+                        <div class="profile_logo ms-2 align_items_center">
+                           <h5 class="first_color">{{ subject }}</h5>
+                        </div>
+                        <div class="left_btn px-3 py-4">
+                            <i class="fa-solid fa-bars text-white"></i>
+                        </div>
+                    </div>
+                    <div class="profile_menu text-start w-100">
+                        <ul class="p-0">
+                            {% for presentation in presentations %}
+                            <li class="border_b py-2">
+                               <span id="s" class="basic_li ps-3 ">{{ presentation.title }}</span>
+                                <ul class="drop_ul p-0">
+                                    {% for presentation_detail in presentation_details %}
+                                    
+                                    {% for detail in presentation_detail %}
+                                        {% if presentation.title == detail.presentation.title %}
+                                            <li class="drop_ul_li" data-pk="{{ detail.pk }}">{{ detail.title }}</li>
+                                        {% endif %}
+                                    {% endfor %}
+                                    {% endfor %}
+                                </ul>            
+                            </li>
+                            {% endfor %}
+                        </ul>
+                      </div>
+                </div>
+            </div>
+            <div class="right_content right_active">
+                    <div class="user_message p-3 text_justify">
+                           <!-- pass -->
+                    </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    let HTMLButton;
+    function ajaxGetter(item){
+        $.ajax({
+            url: "{% url 'presentation_detail' %}",
+            type: 'get',
+            data: { presentation_pk: item },
+            success: function (data) {
+                let code = data[0].fields.code
+                code.replace(/ \ /gi,'')
+                code.replace(/ \r\n /gi,'')
+                document.querySelector('.user_message').innerHTML = code;
+                HTMLButton = document.querySelectorAll(".copyBtn");
+            }
+        });
+    }
+    
+    // HTML BOx JS Code
+    function startCopyBtnFunc(){
+        HTMLButton.forEach((elem) => {
+          let HTMLBoxText = elem.previousElementSibling;
+          navigator.clipboard.writeText(HTMLBoxText.textContent);
+          elem.innerText = "✅ Copied";
+          setTimeout(() => {
+            elem.innerText = "Copy";
+          }, 2000);
+        });
+    }   
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+ 
+
+            
